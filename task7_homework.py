@@ -4,8 +4,8 @@
 # для введеных исходных данных является истинным, и значение False в противном случае.
 
 
-number = int(input("Введите число:"))
-if (number % 2) == 0:
-   print(str(number) + " это четное число")
+A = int(input("Введите число:"))
+if (A % 2) == 0:
+    print("A четное = True; A нечетное = False")
 else:
-   print(str(number) + " это нечетное число")
+    print("A четное = False; нечетное = True")
