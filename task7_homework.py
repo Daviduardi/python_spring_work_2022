@@ -4,8 +4,9 @@
 # для введеных исходных данных является истинным, и значение False в противном случае.
 
 
-A = int(input("Введите число:"))
+A = int(input("Введите число: "))
+
 if (A % 2) == 0:
-    print("A четное = True; A нечетное = False")
+    print(True)
 else:
-    print("A четное = False; нечетное = True")
+    print(False)
