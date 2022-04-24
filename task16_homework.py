@@ -23,8 +23,7 @@ right = 0                                  #счетчик верных отве
 letter = str(input("Введите букву: "))     #вводим букву
 try_number = 10                            #сколько попыток у игрока
 
-#def game(questions_numbers):
-    #global questions
+def game(questions_numbers, answers):
     while right < len(answers[int(questions_numbers)]):  # если угадал букву
         if letter in word:
             place[int(word.index(letter))] = letter
