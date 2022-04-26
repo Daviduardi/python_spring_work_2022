@@ -14,6 +14,16 @@ prices = {
   "orange": 1.5,
   "pear": 3
 }
-### ножно взять отдельно значения без ключей
-# найти их сумму
+
+
+
 def compute_bill(prices):
+    check = dict()
+    summ = 0
+    for key in prices:
+      print(key)
+      check[key] = float(input("Сколько купили? : ")) * prices[key]
+      summ += check[key]
+    return summ
+
+print("Итоговая сумма в чеке ", compute_bill(prices))
