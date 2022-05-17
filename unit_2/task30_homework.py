@@ -12,6 +12,8 @@
 matrix = [[1, 2, 3], [4, 5, 6]]  #ее смог. не понимаю логику
 
 def msum(matrix):
-    sum_ =[i for  matrix.split() for i in matrix]
-    return sum_
-print(msum)
+    columns = len(matrix)
+    strings = len(matrix[1])
+    T = [[matrix[j][i] for j in range(columns)] for i in range(strings)]
+    return sum(list(T))
+print(f"Сумма матрицы {msum(matrix)}")
