@@ -17,3 +17,5 @@ def msum(matrix):
     T = [[matrix[j][i] for j in range(columns)] for i in range(strings)]
     return sum(list(T))
 print(f"Сумма матрицы {msum(matrix)}")
+
+
