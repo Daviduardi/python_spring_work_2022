@@ -9,7 +9,7 @@
 
 import psycopg2
 
-with psycopg2.connect("dbname=testsystem user=testsystem password=123;") as conn:
+with psycopg2.connect("dbname=testsystem user=testsystem password=123") as conn:
     with conn.cursor() as cur:
 
 # Создаю таблицы

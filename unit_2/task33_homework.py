@@ -28,12 +28,12 @@ import psycopg2
 import bcrypt
 
 #Создаем таблицу в БД и заносим туда пользователя
-connect = psycopg2.connect(dbname="testsystem", user="testsystem", password="123", host="localhost", port="5432")
+connect = psycopg2.connect(dbname="testsystem", user="testsystem", password="123", host="localhost", port=5432)
 connect.autocommit = True
 
 
 with connect.cursor() as cur:
-    cur.execute(""" CREATE TABLE "test_group"
+    cur.execute(""" CREATE TABLE "test_gr3"
        ("id_user" serial PRIMARY KEY,
         "login" varchar(100),
         "password" varchar(100),
@@ -46,8 +46,8 @@ with connect.cursor() as cur:
 
 with connect.cursor() as cur:
     cur.execute(
-        "INSERT INTO test_group(login, password, name, surname, patronymic, phone_number, group) "
-        "VALUES ('Davo', '12345', 'David', 'Stepanyan', 'Karoevich', 444555, 'a12')")
+        """INSERT INTO test_gr3("login", "password", "name", "surname", "patronymic", "phone_number", "group") 
+        VALUES ('Davo', '12345', 'David', 'Stepanyan', 'Karoevich', 444555, 'a12')""")
 
 print("1. Вход")
 print("2. Регистрация")
@@ -56,9 +56,9 @@ if selection == 1:
     login = str(input("Введите логин: "))
     password = str(input("Введите пароль: "))
     with connect.cursor() as cur:
-        cur.execute("SELECT * FROM test_group WHERE name = %s AND password %s", [login, password])
+        cur.execute("""SELECT * FROM test_gr3 WHERE name = %s AND password %s""", [login, password])
         if cur.rowcount:
-            cur.execute("SELECT name, surname FROM test_group")
+            cur.execute("""SELECT name, surname FROM test_gr3""")
             name_usr = cur.fetchone()
             print("Привет, ", " ".join(name_usr), "Выберите номер теста: ")
         else:
@@ -75,13 +75,13 @@ elif selection == 2:
     hashandsalt = bcrypt.hashpw(new_password.encode(), bcrypt.gensalt())
     hashandsalt = hashandsalt.decode('utf-8')
     with connect.cursor() as cur:
-        cur.execute("SELECT * FROM test_group WHERE name = %s AND password %s", [new_login, new_password])
+        cur.execute("""SELECT * FROM test_gr3 WHERE name = %s AND password %s""", [new_login, new_password])
         if cur.rowcount:
             print("Пользователь с таким именем существует")
         else:
             cur.execute(
-                "INSERT INTO test_group (login, password, name, surname, patronymic, phone_number, group) VALUES (%s, %s, %s, %s, %s, %s, %s)"
-                [new_login, new_password, new_name, new_surname, new_patronymic, new_phone_number, new_group])
+                """INSERT INTO test_gr3 (login, password, name, surname, patronymic, phone_number, group) VALUES (%s, %s, %s, %s, %s, %s, %s)
+                ['new_login', 'new_password', 'new_name', 'new_surname', 'new_patronymic', 'new_phone_number', 'new_group']""")
         print("Добро пожаловать, ", new_login, new_surname, ". Выберите номер теста: ", sep=" ")
 
 
