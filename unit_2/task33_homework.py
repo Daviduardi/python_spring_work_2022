@@ -33,21 +33,21 @@ connect.autocommit = True
 
 
 with connect.cursor() as cur:
-    cur.execute(""" CREATE TABLE "test_gr3"
+    cur.execute(""" CREATE TABLE "Group"
        ("id_user" serial PRIMARY KEY,
         "login" varchar(100),
         "password" varchar(100),
         "name" varchar(100),
         "surname" varchar(100),
         "patronymic" varchar(100),
-        "phone_number" varchar(100),
-        "group" varchar(100))
+        "age" varchar(100),
+        "group_name" varchar(100))
         """)
 
 with connect.cursor() as cur:
     cur.execute(
-        """INSERT INTO test_gr3("login", "password", "name", "surname", "patronymic", "phone_number", "group") 
-        VALUES ('Davo', '12345', 'David', 'Stepanyan', 'Karoevich', 444555, 'a12')""")
+        """INSERT INTO "Group"("login", "password", "name", "surname", "patronymic", "age", "group_name") 
+        VALUES ('Davo', '12345', 'David', 'Stepanyan', 'Karoevich', 29, '1')""")
 
 print("1. Вход")
 print("2. Регистрация")
@@ -56,9 +56,9 @@ if selection == 1:
     login = str(input("Введите логин: "))
     password = str(input("Введите пароль: "))
     with connect.cursor() as cur:
-        cur.execute("""SELECT * FROM test_gr3 WHERE name = %s AND password %s""", [login, password])
+        cur.execute("""SELECT * FROM "Group" WHERE (name = '{login}' AND password '{new_password}')""")
         if cur.rowcount:
-            cur.execute("""SELECT name, surname FROM test_gr3""")
+            cur.execute("""SELECT name, surname FROM Group""")
             name_usr = cur.fetchone()
             print("Привет, ", " ".join(name_usr), "Выберите номер теста: ")
         else:
@@ -70,19 +70,19 @@ elif selection == 2:
     new_name = str(input("Укажите Ваше имя: "))
     new_surname = str(input("Укажите Вашу фамилию: "))
     new_patronymic = str(input("Укажите Ваше отчество: "))
-    new_phone_number = str(input("Укажите номер телефона: "))
-    new_group = str(input("Укажите номер группы: "))
+    new_age = str(input("Укажите ваш возраст: "))
+    new_group_name = str(input("Укажите номер группы: "))
     hashandsalt = bcrypt.hashpw(new_password.encode(), bcrypt.gensalt())
     hashandsalt = hashandsalt.decode('utf-8')
     with connect.cursor() as cur:
-        cur.execute("""SELECT * FROM test_gr3 WHERE name = %s AND password %s""", [new_login, new_password])
+        cur.execute(f"""SELECT * FROM "Group" WHERE (name = '{new_login}' AND password = '{new_password}')""")
         if cur.rowcount:
             print("Пользователь с таким именем существует")
         else:
             cur.execute(
-                """INSERT INTO test_gr3 (login, password, name, surname, patronymic, phone_number, group) VALUES (%s, %s, %s, %s, %s, %s, %s)
-                ['new_login', 'new_password', 'new_name', 'new_surname', 'new_patronymic', 'new_phone_number', 'new_group']""")
-        print("Добро пожаловать, ", new_login, new_surname, ". Выберите номер теста: ", sep=" ")
+                ("""INSERT INTO "Group"("login", "password", "name", "surname", "patronymic", "age", "group_name") VALUES (%s, %s, %s, %s, %s, %s, %s)"""),
+                [new_login, new_password, new_name, new_surname, new_patronymic, new_age, new_group_name])
+        print("Добро пожаловать, ", new_name, new_surname, ". Выберите номер теста: ", sep=" ")
 
 
 
