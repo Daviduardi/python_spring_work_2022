@@ -20,7 +20,7 @@ class DB:
 
     def get_profile(self, conn, login):
         cur = conn.cursor()
-        cur.execute(f"""SELECT * FROM Student WHERE login = '{login}'""")
+        cur.execute(f"""SELECT "password" FROM "student" WHERE "login" = '{login}'""")
         obj = cur.fetchall()
         return obj
 
@@ -31,19 +31,20 @@ class Auth:
         self.conn = DB("testsystem", "testsystem", "123").get_connect()
 
 
-    def login(self, login, password):
+    def login(self, login = None, password = None):
         """Метод аутентификации пользователя в системе"""
-        self.login = str(input(login.render(self)[0]))
-        self.password = str(input(password.render(self)[1]))
-        user = self.DBname.get_profile(self.conn, login)
-        if user:
-            if password == user[0][6]:
+        self.login = str(input("Enter login: "))
+        self.password = str(input("Enter password: "))
+        self.user = DB("testsystem", "testsystem", "123").get_profile(self.conn, self.login)
+        if self.user:
+            if self.password == self.user[0][0]:
                 self.is_auth = True
                 print("Добро пожаловать!")
+                Test(self.conn).get_test()
             else:
-                print("Неверные данные")
+                print("Неверные password")
         else:
-            Auth.registration(self)
+            Auth().registration()
 
     def registration(self):
 
@@ -56,11 +57,14 @@ class Auth:
         new_login = str(input("Введите логин: "))
         new_password = str(input("Введите пароль: "))
         group = int(input("Введите номер группы: "))
-        new_student = Profile(id_student, lastname, name, age, new_login, new_password, group)
-        new_student.set_profile(self.conn)
         hashandsalt = bcrypt.hashpw(new_password.encode(), bcrypt.gensalt())
         hashandsalt = hashandsalt.decode('utf-8')
+        new_student = Profile(id_student, lastname, name, age, new_login, hashandsalt, group)
+        new_student.set_profile(self.conn)
+
         print("Вы зарегестрированы!")
+        Auth.is_auth = True
+
 
     def logout(self):
         Auth.is_auth = False
@@ -92,53 +96,57 @@ class Profile:
         conn.commit()
         return obj
 
-class Result:
-    def set_profile(self, conn):
-        cur = conn.cursor()
-        cur.execute(f'''INSERT INTO result("id_question", "id_test", "tm_result", "status", "answer", "id_student")
-        VALUES ({self.id_question}, {self.id_test}, {self.tm_result}, {self.status}, {self.answer}, {self.id_student}''')
+# class Result:
+#     def set_profile(self, conn):
+#         cur = conn.cursor()
+#         cur.execute(f'''INSERT INTO result("id_question", "id_test", "tm_result", "status", "answer", "id_student")
+#         VALUES ({self.id_question}, {self.id_test}, {self.tm_result}, {self.status}, {self.answer}, {self.id_student}''')
 
-class Login(View):
-    def render(self):
-        a = "Введите логин: "
-        b = "Введите пароль: "
-        return [a, b]
+# class Login(View):
+#     def render(self):
+#         a = "Введите логин: "
+#         b = "Введите пароль: "
+#         return [a, b]
 
 
 class Test:
     """ В классе реализуем методы работы с БД """
-    def __init__(self, dbname, conn):
-        self.dbname = dbname
-        self.conn = conn
+    def __init__(self, connect):
+        # self.dbname = dbname
+        self.connect = connect
 
     def get_test(self):
         """В методе  получаем список тестов по темам """
-        cur = conn.cursor()
-        cur.execute(f'''SELECT "theme" FROM test''')
-        test = cur.fetchall()
-        return test
+        cur = self.connect.cursor()
+        cur.execute("""SELECT "id_test", "theme" FROM "test" """)
+        tests = cur.fetchall()
+        return tests
 
     def get_questions(self, id_test):
         """В методе  получаем список вопросов-ответов по id теста """
+        cur = self.connect.cursor()
+        cur.execute(f""" SELECT "id_question", "id_answer", "num_answer" FROM "question" 
+        WHERE "id_test" = {id_test} """)
+        test = cur.fetchall
+        return test
+
+
+class TestSystem:
+    "Класс взаимодействует с моделью и представлением. Включает всю бизнес логику системы."
+    def run(self):
+        """Метод реализует запуск теста"""
         pass
 
+    def show_list(self):
+        """Метод реализует вывод списка тестов на экран"""
+        pass
 
-# class TestSystem:
-#     "Класс взаимодействует с моделью и представлением. Включает всю бизнес логику системы."
-#     def run(self):
-#         """Метод реализует запуск теста"""
-#         pass
-#
-#     def show_list(self):
-#         """Метод реализует вывод списка тестов на экран"""
-#         pass
-#
-#     def show_question(self, id_question):
-#         """Метод реализует вывод списка тестов на экран"""
-#
-#
-#     def YouMethods(self):
-#         """Методы которые вам дополнительно понадобятся"""
+    def show_question(self, id_question):
+        """Метод реализует вывод списка тестов на экран"""
+
+
+    def YouMethods(self):
+        """Методы которые вам дополнительно понадобятся"""
 #
 #
 # class View:
@@ -174,9 +182,13 @@ class Test:
 #     def render(self, data):
 #         """Метод реализует отрисовку входа по логину и паролю для зарегистрированного пользователя"""
 
-auth_user = Auth()
 
-auth_user.registration()
+
+
+Auth().login()
+#auth_user = Auth()
+
+#auth_user.login()
 
 # connection = DB("testsystem", "testsystem", 123)
 # conn = connection.get_connect()
